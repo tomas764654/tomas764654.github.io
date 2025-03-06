@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ooga booga</title>
+    <style>
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        body {
+            background-size: 100px 100px;
+            animation: backgroundFade 15s infinite;
+        }
+        
+        @keyframes backgroundFade {
+            0% {
+            background-color: rgba(255, 0, 0, 1);
+            }
+            8.33% {
+            background-color: rgba(255, 127, 0, 1);
+            }
+            16.67% {
+            background-color: rgba(255, 255, 0, 1);
+            }
+            25% {
+            background-color: rgba(0, 255, 0, 1);
+            }
+            33.33% {
+            background-color: rgba(0, 0, 255, 1);
+            }
+            41.67% {
+            background-color: rgba(75, 0, 130, 1);
+            }
+            50% {
+            background-color: rgba(148, 0, 211, 1);
+            }
+            58.33% {
+            background-color: rgba(255, 0, 0, 1);
+            }
+            66.67% {
+            background-color: rgba(255, 127, 0, 1);
+            }
+            75% {
+            background-color: rgba(255, 255, 0, 1);
+            }
+            83.33% {
+            background-color: rgba(0, 255, 0, 1);
+            }
+            91.67% {
+            background-color: rgba(0, 0, 255, 1);
+            }
+            100% {
+            background-color: rgba(75, 0, 130, 1);
+            }
+        }
+        .reset-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .rotate {
+            animation: rotate 96s linear infinite;
+        }
+        #counter2 {
+            font-size: 2em;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <h1>
+            <p style="color: rgba(141, 89, 41, 0.918); font-family: 'OpenDyslexic', cursive, sans-serif; font-size: 4em; text-shadow: 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000; margin-top: 25px;" class="rotate">ooga booga</p>
+        </h1>
+        <div style="margin-left: 20px;"></div>
+            <h1><p style="color: rgba(255, 2, 2, 0.918); text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; font-size: 3em; animation: rainbowText 3s infinite linear; font-family: Arial, sans-serif;" id="counter2">0</p></h1>
+        </div>
+    </div>
+    <script>
+        let counter2 = 0;
+        setInterval(() => {
+            counter2++;
+            document.getElementById('counter2').innerText = counter2;
+        }, 1000);
+
+        function updateCounterColor() {
+            const counterElement = document.getElementById('counter2');
+            const colors = ['red', 'green', 'blue'];
+            let colorIndex = 0;
+            setInterval(() => {
+                counterElement.style.transition = 'color 1s';
+                counterElement.style.color = colors[colorIndex];
+                colorIndex = (colorIndex + 1) % colors.length;
+            }, 1000);
+        }
+
+        updateCounterColor();
+        document.addEventListener('mousemove', (e) => {
+            let npcImage = document.getElementById('npcImage');
+            if (!npcImage) {
+            npcImage = document.createElement('img');
+            npcImage.src = 'mario-8bit.gif';
+            npcImage.id = 'npcImage';
+            npcImage.style.position = 'absolute';
+            npcImage.style.width = '50px';
+            npcImage.style.height = '50px';
+            npcImage.style.pointerEvents = 'none'; // Make sure the image doesn't interfere with cursor events
+            document.body.appendChild(npcImage);
+            }
+            npcImage.style.transition = 'none'; // Remove any transition delay
+            npcImage.style.left = `${e.pageX - 25}px`; // Adjust to center the image on the cursor
+            npcImage.style.top = `${e.pageY - 25}px`; // Adjust to center the image on the cursor
+        });
+
+        setInterval(() => {
+            if (counter2 % 100 === 0 && counter2 !== 0) {
+            let nerdImage = document.createElement('img');
+            nerdImage.src = 'npc-removebg-preview.png';
+            nerdImage.style.position = 'absolute';
+            nerdImage.style.width = '400px';
+            nerdImage.style.height = '500px';
+            nerdImage.style.top = '50%';
+            nerdImage.style.left = '50%';
+            nerdImage.style.transform = 'translate(-50%, -50%)';
+            document.body.appendChild(nerdImage);
+            setTimeout(() => {
+                document.body.removeChild(nerdImage);
+            }, 2000);
+            }
+        }, 1000);
+        document.addEventListener('mousemove', (e) => {
+            let npcImage = document.getElementById('npcImage');
+            if (!npcImage) {
+            npcImage = document.createElement('img');
+            npcImage.src = 'mario-8bit.gif';
+            npcImage.id = 'npcImage';
+            npcImage.style.position = 'absolute';
+            npcImage.style.width = '50px';
+            npcImage.style.height = '50px';
+            npcImage.style.pointerEvents = 'none'; // Make sure the image doesn't interfere with cursor events
+            document.body.appendChild(npcImage);
+            }
+            npcImage.style.left = `${e.pageX - 25}px`; // Adjust to center the image on the cursor
+            npcImage.style.top = `${e.pageY - 25}px`; // Adjust to center the image on the cursor
+        });
+    </script>
+</body>
