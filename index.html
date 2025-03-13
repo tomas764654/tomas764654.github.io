@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nerd clicker</title>
+</head>
+<body>
+    <div style="text-align: center;">
+        <img id="nerdButton" src="nerd!!!!!.png" alt="Nerd Button" style="cursor: pointer;">
+        <p>Clicks: <span id="clickCount">0</span></p>
+        <p>Clicks per second: <span id="cpsCount">0</span></p>
+        <button id="upgradeButton" disabled>Upgrade (Cost: 50 clicks)</button>
+    <button id="autoClickUpgradeButton" disabled>Auto-Click Upgrade (Cost: 100 clicks)</button>
+
+    <script>
+    let clickCount = 0;
+    let clickIncrement = 1;
+    let clicksInSecond = 0;
+    let autoClickIncrement = 0;
+    const nerdButton = document.getElementById('nerdButton');
+    const clickCountDisplay = document.getElementById('clickCount');
+    const cpsCountDisplay = document.getElementById('cpsCount');
+    const upgradeButton = document.getElementById('upgradeButton');
+    const autoClickUpgradeButton = document.getElementById('autoClickUpgradeButton');
+    let upgradeCost = 50; // Initial upgrade cost set to 50 clicks
+    let autoClickUpgradeCost = 100; // Initial auto-click upgrade cost set to 100 clicks
+
+    nerdButton.addEventListener('click', () => {
+        clickCount += clickIncrement;
+        clicksInSecond++;
+        clickCountDisplay.textContent = clickCount;
+        if (clickCount >= upgradeCost) {
+        upgradeButton.disabled = false;
+        }
+        if (clickCount >= autoClickUpgradeCost) {
+        autoClickUpgradeButton.disabled = false;
+        }
+    });
+
+    upgradeButton.addEventListener('click', () => {
+        if (clickCount >= upgradeCost) {
+        clickCount -= upgradeCost;
+        clickCountDisplay.textContent = clickCount;
+        upgradeCost *= 2; // Increase the cost for the next upgrade
+        upgradeButton.textContent = `Upgrade (Cost: ${upgradeCost} clicks)`;
+        upgradeButton.disabled = true;
+        clickIncrement++; // Increase the click increment by 1
+        }
+    });
+
+    autoClickUpgradeButton.addEventListener('click', () => {
+        if (clickCount >= autoClickUpgradeCost) {
+        clickCount -= autoClickUpgradeCost;
+        clickCountDisplay.textContent = clickCount;
+        autoClickUpgradeCost *= 2; // Increase the cost for the next auto-click upgrade
+        autoClickUpgradeButton.textContent = `Auto-Click Upgrade (Cost: ${autoClickUpgradeCost} clicks)`;
+        autoClickUpgradeButton.disabled = true;
+        autoClickIncrement++; // Increase the auto-click increment by 1
+        }
+    });
+
+    setInterval(() => {
+        cpsCountDisplay.textContent = clicksInSecond;
+        clicksInSecond = 0;
+        clickCount += autoClickIncrement;
+        clickCountDisplay.textContent = clickCount;
+    }, 1000);
+    </script>
+
+</body>
+</html>
