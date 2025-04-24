@@ -4,14 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>nerd clicker</title>
+    <script>
+        // Load saved data from localStorage on page load
+        window.addEventListener('load', () => {
+            const savedClickCount = localStorage.getItem('clickCount');
+            const savedClickIncrement = localStorage.getItem('clickIncrement');
+            const savedUpgradeCost = localStorage.getItem('upgradeCost');
+            const savedAutoClickIncrement = localStorage.getItem('autoClickIncrement');
+            const savedAutoClickUpgradeCost = localStorage.getItem('autoClickUpgradeCost');
+
+            if (savedClickCount !== null) clickCount = parseInt(savedClickCount, 10);
+            if (savedClickIncrement !== null) clickIncrement = parseInt(savedClickIncrement, 10);
+            if (savedUpgradeCost !== null) upgradeCost = parseInt(savedUpgradeCost, 10);
+            if (savedAutoClickIncrement !== null) autoClickIncrement = parseInt(savedAutoClickIncrement, 10);
+            if (savedAutoClickUpgradeCost !== null) autoClickUpgradeCost = parseInt(savedAutoClickUpgradeCost, 10);
+
+            clickCountDisplay.textContent = clickCount;
+            upgradeButton.textContent = `Upgrade (Cost: ${upgradeCost} clicks)`;
+            autoClickUpgradeButton.textContent = `Auto-Click Upgrade (Cost: ${autoClickUpgradeCost} clicks)`;
+        });
+
+        // Save data to localStorage before the page unloads
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('clickCount', clickCount);
+            localStorage.setItem('clickIncrement', clickIncrement);
+            localStorage.setItem('upgradeCost', upgradeCost);
+            localStorage.setItem('autoClickIncrement', autoClickIncrement);
+            localStorage.setItem('autoClickUpgradeCost', autoClickUpgradeCost);
+        });
+    </script>
 </head>
 <body>
     <div style="text-align: center;">
         <img id="nerdButton" src="nerd!!!!!.png" alt="Nerd Button" style="cursor: pointer;">
         <p>Clicks: <span id="clickCount">0</span></p>
         <p>Clicks per second: <span id="cpsCount">0</span></p>
-        <button id="upgradeButton" disabled>+1 click upgrade (Cost: 50 clicks)</button>
-    <button id="autoClickUpgradeButton" disabled>Auto-Click Upgrade (Cost: 100 clicks)</button>
+        <button id="upgradeButton" disabled>+1 clicks per click (Cost: 50 clicks)</button>
+    <button id="autoClickUpgradeButton" disabled> +1 cps (Cost: 100 clicks)</button>
 
     <script>
     let clickCount = 0;
