@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Google Search Engine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+    }
+    #search-bar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    input {
+      width: 300px;
+      max-width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-left: 5px;
+      border: none;
+      background-color: #4285f4;
+      color: white;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    .tabs {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      margin-right: 10px;
+      background-color: #e0e0e0;
+      color: #333;
+    }
+    .tabs button.active {
+      background-color: #4285f4;
+      color: white;
+    }
+    #results {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .result {
+      margin: 15px 0;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    .result a {
+      font-size: 18px;
+      text-decoration: none;
+      color: #1a0dab;
+    }
+    .result p {
+      margin: 5px 0;
+      color: #444;
+    }
+    .image-result img {
+      max-width: 200px;
+      margin: 10px;
+      border-radius: 5px;
+      transition: transform 0.3s;
+    }
+    .image-result img:hover {
+      transform: scale(1.05);
+    }
+    small {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Search Engine</h1>
+
+  <div id="search-bar">
+    <input type="text" id="query" placeholder="Search the web...">
+    <button onclick="search(currentTab)">Search</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('web')">Web</button>
+    <button class="tab" onclick="switchTab('image')">Images</button>
+    <button class="tab" onclick="switchTab('news')">News</button>
+  </div>
+
+  <div id="results"></div>
+
+  <script>
+    const apiKey = "AIzaSyBw-j_H_R1IMm-9D0GeR4nTOdgwg4hLQII";  // replace with your API key
+    const cx = "a3e56e5c5606f45df"; // replace with your Search Engine ID
+
+    let currentTab = "web";
+
+    // Switch tab
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll(".tabs .tab").forEach(btn => btn.classList.remove("active"));
+      document.querySelector(`.tabs button[onclick="switchTab('${tab}')"]`).classList.add("active");
+      search(tab);
+    }
+
+    // Perform search
+    async function search(type) {
+      const query = document.getElementById("query").value.trim();
+      const resultsDiv = document.getElementById("results");
+
+      if (!query) {
+        resultsDiv.innerHTML = "Please enter a search term.";
+        return;
+      }
+
+      resultsDiv.innerHTML = "Loading...";
+
+      let url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}`;
+
+      if (type === "image") url += "&searchType=image";
+      if (type === "news") url += "+site:news.google.com";
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        resultsDiv.innerHTML = "";
+
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = type === "image" ? "image-result" : "result";
+
+            if (type === "image" && item.link) {
+              div.innerHTML = `<a href="${item.image.contextLink}" target="_blank">
+                                <img src="${item.link}" alt="${item.title}">
+                              </a>`;
+            } else {
+              div.innerHTML = `
+                <a href="${item.link}" target="_blank">${item.title}</a>
+                <p>${item.snippet || ""}</p>
+                <small>${item.link}</small>
+              `;
+            }
+            resultsDiv.appendChild(div);
+          });
+        } else {
+          resultsDiv.innerHTML = "No results found.";
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = "Error fetching results.";
+        console.error(error);
+      }
+    }
+
+    // Enter key triggers search
+    document.getElementById("query").addEventListener("keydown", e => {
+      if (e.key === "Enter") search(currentTab);
+    });
+  </script>
+</body>
+</html>
