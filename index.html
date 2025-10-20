@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Roblox Code Generator</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#ff4655;--muted:#94a3b8}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+    body{background:linear-gradient(180deg,#071026 0%, #0b1220 60%);color:#e6eef8;display:flex;align-items:center;justify-content:center;padding:28px}
+    .wrap{max-width:920px;width:100%;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.6);border-radius:14px;padding:26px;position:relative}
+    header{display:flex;align-items:center;gap:14px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#0ea5a4,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:800;color:#021022}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:8px 0 18px;color:var(--muted)}
+
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .card{background:var(--card);padding:18px;border-radius:12px}
+
+    .big-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ff8aa2);color:#071022;font-weight:700;border:none;cursor:pointer;font-size:16px}
+    .muted{color:var(--muted);font-size:13px}
+
+    .preview{height:220px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));display:flex;align-items:center;justify-content:center;flex-direction:column}
+    .code{font-family:Menlo,Consolas,monospace;background:rgba(0,0,0,0.28);padding:8px 12px;border-radius:8px;font-size:18px;letter-spacing:2px}
+
+    .list{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+    .list .item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01)}
+    .copy-btn{border:none;background:transparent;color:var(--muted);cursor:pointer;font-weight:700}
+
+    .disclaimer{margin-top:12px;padding:12px;border-radius:8px;background:linear-gradient(180deg, rgba(255,69,85,0.06), rgba(255,69,85,0.02));color:#ffd7da}
+    small.note{display:block;margin-top:8px;color:var(--muted)}
+
+    footer{margin-top:14px;text-align:right;color:var(--muted);font-size:13px}
+
+    /* Gate overlay styles */
+    .gate-overlay{position:absolute;inset:0;background:linear-gradient(180deg, rgba(2,6,23,0.92), rgba(2,6,23,0.88));backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;border-radius:14px;z-index:40}
+    .gate-card{width:100%;max-width:680px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:22px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.6)}
+    .gate-card h2{margin:0 0 8px 0}
+    .gate-row{display:flex;gap:8px;margin-top:12px}
+    .gate-input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .gate-submit{margin-top:12px;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(90deg,var(--accent),#ff8aa2);font-weight:700}
+    .gate-error{margin-top:8px;color:#ffb4b4;font-size:13px}
+
+    @media (max-width:880px){.grid{grid-template-columns:1fr;}.card{padding:14px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">RB</div>
+      <div>
+        <h1>Roblox Code Generator — <span style="color:#ffd7da;font-weight:700">DEMO</span></h1>
+        <p class="lead"> <strong></strong> produce real or redeemable codes.</p>
+      </div>
+    </header>
+
+    <div class="grid" style="margin-top:18px">
+      <div class="card">
+        <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
+          <div>
+            <div class="muted">Select reward type</div>
+            <select id="type" style="margin-top:6px;padding:8px;border-radius:8px;background:transparent;color:inherit;border:1px solid rgba(255,255,255,0.04)">
+              <option>Robux ()</option>
+              <option>Exclusive Item ()</option>
+              <option>Game Pass </option>
+            </select>
+          </div>
+          <div style="text-align:right">
+            <div class="muted">Status</div>
+            <div style="margin-top:6px;font-weight:800;color:#6ee7b7">Demo mode</div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:10px;align-items:center">
+          <button id="generate" class="big-btn">Generate Demo Code</button>
+          <button id="regen" class="big-btn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:700">Regenerate</button>
+        </div>
+
+        <div class="preview" style="margin-top:16px">
+          <div class="muted">Generated code</div>
+          <div id="mainCode" class="code" style="margin-top:10px">— NOT GENERATED —</div>
+          <small class="note">if you put in fake account nothing will happen.</small>
+        </div>
+
+        <div class="list" id="history" aria-live="polite"></div>
+
+        <div class="disclaimer">
+          <strong>Important:</strong>
+          <div style="margin-top:6px">This page is a <strong>robux only</strong> This is for educational reasons only.</div>
+          <small class="note">.</small>
+        </div>
+
+      </div>
+
+      <aside class="card">
+        <h3 style="margin:0">How this code works</h3>
+        <p class="muted" style="margin-top:8px">Click <strong>Generate roblox Code</strong> to create a randomly formatted string that looks like a code. It's for UI practice only.</p>
+
+        <div style="margin-top:12px">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="flex:1">
+              <div class="muted">Last 5 roblox codes</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+          <div class="muted">Tip: never show to police they will chage you for fraud.</div>
+          <div class="muted">This do not share website.</div>
+        </div>
+
+        <footer>
+          <div class="muted">Built for learning • Not affiliated with Roblox</div>
+        </footer>
+      </aside>
+    </div>
+
+    <!-- Gate overlay: requires two fields to be filled to proceed -->
+    <div id="gate" class="gate-overlay" role="dialog" aria-modal="true">
+      <div class="gate-card">
+        <h2>Enter demo gate</h2>
+        <p class="muted">Please fill both fields below to continue. put username and password"wall" — still fully offline.</p>
+
+        <div class="gate-row">
+          <input id="gate1" class="gate-input" placeholder="First box (any text)" aria-label="first gate box" />
+          <input id="gate2" class="gate-input" placeholder="Second box (any text)" aria-label="second gate box" />
+        </div>
+        <button id="gateSubmit" class="gate-submit" disabled>Enter</button>
+        <div id="gateError" class="gate-error" aria-live="polite" style="display:none">Please fill both boxes to proceed.</div>
+        <small class="note">Note: put password and username</small>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Demo-only code: generates clearly fake-looking codes and keeps them local.
+    const main = document.getElementById('mainCode');
+    const history = document.getElementById('history');
+    const generateBtn = document.getElementById('generate');
+    const regenBtn = document.getElementById('regen');
+
+    const gate = document.getElementById('gate');
+    const gate1 = document.getElementById('gate1');
+    const gate2 = document.getElementById('gate2');
+    const gateSubmit = document.getElementById('gateSubmit');
+    const gateError = document.getElementById('gateError');
+
+    function randomSegment(len){
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // omit confusing chars
+      let s='';
+      for(let i=0;i<len;i++) s += chars[Math.floor(Math.random()*chars.length)];
+      return s;
+    }
+
+    function makeDemoCode(type){
+      // clearly fake pattern: RBX-XXXX-YYYY-ZZZZ
+      const segs = [randomSegment(4), randomSegment(4), randomSegment(4)];
+      return `RBX-${segs.join('-')}`;
+    }
+
+    function addToHistory(code){
+      const item = document.createElement('div');
+      item.className = 'item';
+      item.innerHTML = `<div class="muted">${new Date().toLocaleTimeString()}</div><div style="display:flex;gap:8px;align-items:center"><div class="code" style="font-size:14px;padding:6px">${code}</div><button class="copy-btn" data-code="${code}">Copy</button></div>`;
+      history.prepend(item);
+      // keep only 5 items
+      while(history.children.length>5) history.removeChild(history.lastChild);
+    }
+
+    // Gate logic: enable submit only when both inputs have some non-whitespace text
+    function updateGateState(){
+      const a = gate1.value.trim();
+      const b = gate2.value.trim();
+      gateSubmit.disabled = !(a.length>0 && b.length>0);
+      gateError.style.display = 'none';
+    }
+
+    gate1.addEventListener('input', updateGateState);
+    gate2.addEventListener('input', updateGateState);
+
+    gateSubmit.addEventListener('click', () => {
+      if(gate1.value.trim() && gate2.value.trim()){
+        // hide gate
+        gate.style.display = 'none';
+        // focus first interactive element on page for accessibility
+        generateBtn.focus();
+      } else {
+        gateError.style.display = 'block';
+      }
+    });
+
+    // keyboard accessibility: press Enter in second box to submit if allowed
+    gate2.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' && !gateSubmit.disabled){
+        gateSubmit.click();
+      }
+    });
+
+    generateBtn.addEventListener('click',()=>{
+      const type = document.getElementById('type').value;
+      const code = makeDemoCode(type);
+      main.textContent = code + '  \u2022  (Demo)';
+      addToHistory(code);
+    });
+
+    regenBtn.addEventListener('click',()=>{
+      const current = main.textContent.split('  ')[0];
+      if(!current || current.includes('NOT')){
+        main.textContent = '— NOT GENERATED —';
+      } else {
+        const newCode = makeDemoCode();
+        main.textContent = newCode + '  \u2022  (Demo)';
+        addToHistory(newCode);
+      }
+    });
+
+    // copy delegate
+    history.addEventListener('click',(e)=>{
+      const btn = e.target.closest('button.copy-btn');
+      if(!btn) return;
+      const code = btn.getAttribute('data-code');
+      navigator.clipboard?.writeText(code).then(()=>{
+        btn.textContent = 'Copied';
+        setTimeout(()=>btn.textContent='Copy',900);
+      }).catch(()=>{
+        btn.textContent = 'Copy failed';
+      })
+    });
+
+    // small initial demo code
+    main.textContent = '— NOT GENERATED —';
+  </script>
+</body>
+</html>
